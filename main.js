@@ -1,13 +1,13 @@
 // import 
 const SHA256 = require('crypto-js/sha256');
-const AES = require('crypto-js/aes');
+const crypto = require('crypto');
 
 // structure 
 class Block {
 	constructor(index, timestamp, data, previousHash = ''){
 		this.index = index;
 		this.timestamp = timestamp;
-		this.data = this.encryptData();
+		this.data = data;
 		this.previousHash = previousHash;
 		this.hash = this.calculateHash();
 	}
@@ -18,13 +18,12 @@ class Block {
 		return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data)).toString();
 	}
 
-	encryptData(){
-		return AES.AES.encrypt(this.data, 'key');
-	}
+	// encryptData(data){
+	// 	return crypto.createCipher("aes-256-ctr", key).update(data, "utf-8", "hex");
+	// }
 
 	decryptData(key){
-		var bytes  = AES.AES.decrypt(this.data, key);
-		var plaintext = bytes.toString(AES.enc.Utf8);
+		return crypto.createDecipher("aes-256-ctr", key).update(this.data, "hex", "utf-8");
 	}
 }
 
@@ -35,7 +34,7 @@ class Blockchain {
 	}
 
 	createGenesisBlock() {
-		return new Block(0, "19/12/2017", "Hi", "0");
+		return new Block(0, "10/03/2018", "8858cb2e83e47c5ee141e331b2f696e3db3d2b7079a6d645f572810973be81843fcd9aff4a0317593fb7a872e2022803679bd6d9a98583c290b8808a3b175b483f137cbb4f7a8dc94b3f6dbabf9628", "0");
 	}
 
 	getLatestBlock(){
@@ -72,20 +71,21 @@ class Blockchain {
 
 }
 
-// main 
+// Creating the blockchain
 let maisaChain = new Blockchain();
-maisaChain.addBlock(new Block(1, "19/12/2017", "testing"));
-maisaChain.addBlock(new Block(2, "19/12/2017", "testing second block"));
-maisaChain.addBlock(new Block(3, "19/12/2017", "testing third block"));
+maisaChain.addBlock(new Block(1, "10/03/2018", "4ae54f590e0cb41a23a5286470075ba85c80fb3fbb5917457a960579fd425cc1af700ce088be93"));
+maisaChain.addBlock(new Block(2, "10/03/2018", "8858cb2e83e47c5ee141e331b2f696e3db3d2b7079a6d645f572810973be81843fcd9aff4a0317593fb7a872e2022803679bd6d9a98583c290b8808a3b175b483f137cbb4f7a8dc94b3f6dbabf9628"));
 
-console.log('Is blockchain valid? ' + maisaChain.isChainValid());
+// Print 
+console.log(JSON.stringify(maisaChain, null, 5));
 
-maisaChain.chain[1].data =  "changing the kiii";
-maisaChain.chain[1].hash = maisaChain.chain[1].calculateHash();
 
-//console.log(JSON.stringify(maisaChain, null, 5));
-
-console.log('Is blockchain valid? ' + maisaChain.isChainValid());
+// var key = "";
+// // Descrypt the chain
+// for (i = 0; i < maisaChain.chain.length; i++) {
+// 	var desc = maisaChain.chain[i].decryptData(key);
+// 	console.log(desc);
+// }
 
 
 
