@@ -1,6 +1,7 @@
 // import 
 const SHA256 = require('crypto-js/sha256');
 const crypto = require('crypto');
+const key = "azul";
 
 // structure 
 class Block {
@@ -11,6 +12,7 @@ class Block {
 		this.previousHash = previousHash;
 		this.hash = this.calculateHash();
 	}
+
 	/* 
 	Take the properties of the block, run it throght a hash function and return the hash
 	*/
@@ -18,9 +20,9 @@ class Block {
 		return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data)).toString();
 	}
 
-	// encryptData(data){
-	// 	return crypto.createCipher("aes-256-ctr", key).update(data, "utf-8", "hex");
-	// }
+  encryptData(data){
+    return crypto.createCipher("aes-256-ctr", key).update(data, "utf-8", "hex");
+  }
 
 	decryptData(key){
 		return crypto.createDecipher("aes-256-ctr", key).update(this.data, "hex", "utf-8");
@@ -34,7 +36,8 @@ class Blockchain {
 	}
 
 	createGenesisBlock() {
-		return new Block(0, "10/03/2018", "8858cb2e83e47c5ee141e331b2f696e3db3d2b7079a6d645f572810973be81843fcd9aff4a0317593fb7a872e2022803679bd6d9a98583c290b8808a3b175b483f137cbb4f7a8dc94b3f6dbabf9628", "0");
+    return new Block(0, "10/03/2018", "8858cb2e83e47c5ee141e331b2f696e3db3d2b7079a6d645f572810973be81843fcd9aff4a0317593fb7a872e2022803679bd6d9a98583c290b8808a3b175b483f137cbb4f7a8dc94b3f6dbabf9628", "0");
+    //return new Block(0, "10/03/2018", "claro que sim <3", 
 	}
 
 	getLatestBlock(){
@@ -53,7 +56,6 @@ class Blockchain {
 			const currentBlock = this.chain[i];
 			const previousBlock = this.chain[i - 1];
 			
-			console.log('Hash: '+currentBlock.hash+'previousHash: '+previousBlock.hash);
 			// verify if the hash of the current block is valid
 			if (currentBlock.hash !== currentBlock.calculateHash()) {
 				return false;
@@ -75,17 +77,12 @@ class Blockchain {
 let maisaChain = new Blockchain();
 maisaChain.addBlock(new Block(1, "10/03/2018", "4ae54f590e0cb41a23a5286470075ba85c80fb3fbb5917457a960579fd425cc1af700ce088be93"));
 maisaChain.addBlock(new Block(2, "10/03/2018", "8858cb2e83e47c5ee141e331b2f696e3db3d2b7079a6d645f572810973be81843fcd9aff4a0317593fb7a872e2022803679bd6d9a98583c290b8808a3b175b483f137cbb4f7a8dc94b3f6dbabf9628"));
+maisaChain.addBlock(new Block(3, "10/03/2018", "4ae54f2e4159f85e23fca58cf44b7da519c3e025e94817455ecf4146b003c73979"));
 
-// Print 
-console.log(JSON.stringify(maisaChain, null, 5));
-
-
-// var key = "";
-// // Descrypt the chain
-// for (i = 0; i < maisaChain.chain.length; i++) {
-// 	var desc = maisaChain.chain[i].decryptData(key);
-// 	console.log(desc);
-// }
-
-
+//var key = "azul";
+//Descrypt the chain
+for (i = 0; i < maisaChain.chain.length; i++) {
+  var desc = maisaChain.chain[i].decryptData(key);
+  console.log(desc);
+}
 
